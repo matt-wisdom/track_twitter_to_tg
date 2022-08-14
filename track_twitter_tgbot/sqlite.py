@@ -36,7 +36,7 @@ def select(conn: sqlite3.Connection, tweet_id: int):
     :return:
     """
     cur = conn.cursor()
-    cur.execute(f"SELECT * FROM DATA where ID=?", tweet_id)
+    cur.execute(f"SELECT * FROM DATA where ID=?", (tweet_id,))
 
     row = cur.fetchone()
     return row
@@ -49,5 +49,5 @@ def insert(conn: sqlite3.Connection, data: int):
     :param priority:
     :return:
     """
-    conn.execute(f"""INSERT INTO DATA (ID) VALUES (?)""", data)
+    conn.execute(f"""INSERT INTO DATA (ID) VALUES (?)""", (int(data),))
     conn.commit()

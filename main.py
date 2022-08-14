@@ -2,6 +2,7 @@ import os
 import multiprocessing
 import threading
 from typing import List
+import logging
 
 import dotenv
 
@@ -10,6 +11,7 @@ from track_twitter_tgbot.scraper import scrape
 from conf import ACCOUNTS_FILES, THREADS, PROCESSES
 
 dotenv.load_dotenv(dotenv.find_dotenv())
+
 
 def scrape_tweets(
     accounts: list, queue: multiprocessing.Queue
@@ -52,12 +54,12 @@ def orchestrate_scrapers(
     per_p = round(len(accounts) / PROCESSES)
     for i in range(PROCESSES - 1):
         scraper_processes.append(
-            threading.Thread(
+            multiprocessing.Process(
                 target=scrape, args=(accounts[i * per_p : (i + 1) * per_p], queue)
             )
         )
     scraper_processes.append(
-        threading.Thread(
+        multiprocessing.Process(
             target=scrape, args=(accounts[(PROCESSES - 1) * per_p :], queue)
         )
     )
@@ -74,7 +76,7 @@ if __name__ == "__main__":
         # Launch processes
         for process in processes:
             process.start()
-        
+
         # Credentials are stored as environment variables.
         run_bot(queue, os.environ)
     except KeyboardInterrupt:
