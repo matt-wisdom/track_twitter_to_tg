@@ -1,0 +1,3 @@
+ACCOUNTS_FILES = "accounts.txt"
+THREADS = 3
+PROCESSES = 1
