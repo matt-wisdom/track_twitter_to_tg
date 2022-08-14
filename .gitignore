@@ -42,9 +42,9 @@ pydevd*.log
 nodeLanguageServer/**
 nodeLanguageServer.*/**
 dist/**
-# translation files
 *.xlf
 *.nls.*.json
 *.i18n.json
 bot.session
 bot.session-journal
+.env
