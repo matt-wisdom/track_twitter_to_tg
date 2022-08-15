@@ -10,6 +10,7 @@ Telethon = "^1.24.0"
 pytz = "^2022.2.1"
 snscrape = "^0.4.3"
 python-dotenv = "^0.20.0"
+pytest-timeout = "^2.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
