@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import multiprocessing
 from random import randrange
 import sys
+import time
 from typing import Dict, Generator
 
 import pytz
@@ -10,7 +11,7 @@ import snscrape.modules.twitter as sntwitter
 
 import os
 from . import sqlite
-from conf import MAX_TWEET_AGE_MINUTES
+from conf import MAX_TWEET_AGE_MINUTES, POLL_INTERVAL
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -32,6 +33,7 @@ def scrape_tweets(
             for i, tweet in enumerate(
                 sntwitter.TwitterSearchScraper(f"from:{account}").get_items()
             ):
+                time.sleep(POLL_INTERVAL)
                 if (
                     tweet.date
                     < pytz.UTC.localize(
