@@ -48,3 +48,4 @@ dist/**
 bot.session
 bot.session-journal
 .env
+poetry.lock
