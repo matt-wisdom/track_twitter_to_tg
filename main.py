@@ -2,19 +2,18 @@ import os
 import multiprocessing
 import threading
 from typing import List
-import logging
 
 import dotenv
 
 from track_twitter_tgbot.bot import run_bot
 from track_twitter_tgbot.scraper import scrape
-from conf import ACCOUNTS_FILES, THREADS, PROCESSES
+from conf import ACCOUNTS_FILES, PROCESSES, THREADS
 
 dotenv.load_dotenv(dotenv.find_dotenv())
 
 
 def scrape_tweets(
-    accounts: list, queue: multiprocessing.Queue
+    accounts: list, queue: multiprocessing.Queue, threads: int = THREADS
 ) -> List[threading.Thread]:
     """
     Start threads to get tweets to put in queue.
@@ -22,18 +21,19 @@ def scrape_tweets(
     :param accounts: List of accounts to poll for recent tweets.
     :param queue: multiprocessing.Queue object to put scraped tweets in.
     """
-    per_t = round(len(accounts) / THREADS)
+    per_t = round(len(accounts) / threads)
     scraper_threads = []
-    for i in range(THREADS - 1):
+    for i in range(threads - 1):
         scraper_threads.append(
             threading.Thread(
-                target=scrape, args=(accounts[i * per_t : (i + 1) * per_t], queue)
+                target=scrape,
+                args=(accounts[i * per_t : (i + 1) * per_t], queue),
             )
         )
     scraper_threads.append(
         threading.Thread(
             target=scrape,
-            args=(accounts[(THREADS - 1) * per_t : ((THREADS)) * per_t], queue),
+            args=(accounts[(threads - 1) * per_t : ((threads)) * per_t], queue),
         )
     )
     for thread in scraper_threads:
@@ -42,17 +42,17 @@ def scrape_tweets(
 
 
 def orchestrate_scrapers(
-    accounts: list, queue: multiprocessing.Queue
+    accounts: list, queue: multiprocessing.Queue, processes: int = PROCESSES
 ) -> List[multiprocessing.Process]:
     """
-    Create `PROCESSES` processes with accounts divides 'equally' among them
+    Create `processes` processes with accounts divides 'equally' among them
     for running scrapers.
 
     :param accounts: List of accounts to poll for recent tweets.
     """
     scraper_processes = []
-    per_p = round(len(accounts) / PROCESSES)
-    for i in range(PROCESSES - 1):
+    per_p = round(len(accounts) / processes)
+    for i in range(processes - 1):
         scraper_processes.append(
             multiprocessing.Process(
                 target=scrape, args=(accounts[i * per_p : (i + 1) * per_p], queue)
@@ -60,7 +60,7 @@ def orchestrate_scrapers(
         )
     scraper_processes.append(
         multiprocessing.Process(
-            target=scrape, args=(accounts[(PROCESSES - 1) * per_p :], queue)
+            target=scrape, args=(accounts[(processes - 1) * per_p :], queue)
         )
     )
     return scraper_processes
