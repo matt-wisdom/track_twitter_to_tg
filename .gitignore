@@ -50,3 +50,4 @@ bot.session-journal
 .env
 poetry.lock
 accounts-test.txt
+*.db
