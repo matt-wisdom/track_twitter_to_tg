@@ -16,7 +16,7 @@ def test_version():
     assert __version__ == "0.1.0"
 
 
-@pytest.mark.timeout(20)
+@pytest.mark.timeout(30)
 def test_scrape_tweets():
     queue = multiprocessing.Queue()
     threads = scrape_tweets([" ", " ", " "], queue, 2)
@@ -37,7 +37,7 @@ def test_scrape_tweets():
     )
 
 
-@pytest.mark.timeout(20)
+@pytest.mark.timeout(30)
 def test_orchestrate_scrapers():
     os.unlink("test.db")
     queue = multiprocessing.Queue()
